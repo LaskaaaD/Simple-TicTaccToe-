@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pl-PL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TicTacToe</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
+    />
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background-color: #333333;
+        font-family: sans-serif;
+      }
+      .board {
+        width: 600px;
+        height: 600px;
+        margin: 20px auto;
+        background-color: #f1f1f1;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 5px;
+      }
+      .hastag-piece {
+        background-color: #111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+        color: #fff;
+        font-size: 124px;
+        font-weight: 600;
+      }
+      .hastag-piece:hover {
+        background-color: #1f1f1f;
+        cursor: pointer;
+      }
+      .onTop {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 10;
+        display: none;
+      }
+      .score {
+        width: 80%;
+        min-height: 300px;
+        margin: 250px auto;
+        background-color: #333333;
+        box-shadow: 0px 0px 300px 50px black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .score button {
+        background-color: rgb(118, 179, 236);
+        padding: 25px 55px;
+        font-size: 22px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #fff;
+        border: none;
+        outline: none;
+        border-radius: 15px;
+        position: absolute;
+        left: 50%;
+        bottom: 10%;
+        transform: translateX(-50%);
+      }
+      .score p {
+        text-align: center;
+        font-size: 94px;
+        color: #fff;
+        text-transform: uppercase;
+        word-wrap: break-word;
+      }
+      .game-name {
+        font-size: 36px;
+        font-weight: 600;
+        color: rgb(118, 179, 236);
+        padding: 5px 15px;
+      }
+      .scoreboard {
+        text-align: center;
+        font-size: 76px;
+        font-weight: 700;
+        color: #f1f1f1;
+      }
+      .game-name img {
+        width: 70px;
+        margin-right: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="onTop">
+      <div class="score">
+        <p></p>
+        <button>Play more!</button>
+      </div>
+    </div>
+    <div class="game-name"><img src="./tictactoelogo.png" />TicTacToe</div>
+    <div class="scoreboard">0 : 0</div>
+    <div class="board">
+      <div class="hastag-piece" id="piece0"></div>
+      <div class="hastag-piece" id="piece1"></div>
+      <div class="hastag-piece" id="piece2"></div>
+      <div class="hastag-piece" id="piece3"></div>
+      <div class="hastag-piece" id="piece4"></div>
+      <div class="hastag-piece" id="piece5"></div>
+      <div class="hastag-piece" id="piece6"></div>
+      <div class="hastag-piece" id="piece7"></div>
+      <div class="hastag-piece" id="piece8"></div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const ticTacToe = () => {
+        const hastagPieces = document.querySelectorAll('.hastag-piece');
+        const nextRoundButton = document.querySelector('.score button');
+        const onTop = document.querySelector('.onTop');
+        const winnerCominations = [
+          ['0', '1', '2'],
+          ['3', '4', '5'],
+          ['6', '7', '8'],
+          ['0', '3', '6'],
+          ['1', '4', '7'],
+          ['2', '5', '8'],
+          ['0', '4', '8'],
+          ['2', '4', '6'],
+        ];
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let playerMovement = true;
+        let playerOne = [];
+        let playerTwo = [];
+        let scoreboard = [0, 0];
+
+        hastagPieces.forEach((element) => {
+          element.addEventListener('click', () => {
+            let clickedElement = element.id.split('piece')[1];
+            if (board[clickedElement] !== '') return;
+            if (playerMovement) {
+              element.innerHTML = 'X';
+              board[clickedElement] = 1;
+              playerOne.push(clickedElement);
+              playerMovement = false;
+            } else {
+              element.innerHTML = 'O';
+              board[clickedElement] = 0;
+              playerTwo.push(clickedElement);
+              playerMovement = true;
+            }
+            winnerCominations.forEach((element) => {
+              if (element.every((index) => playerOne.indexOf(index) > -1)) {
+                scoreboard[0] += 1;
+                showWinner('Winner Player X!!!', scoreboard);
+              }
+              if (element.every((index) => playerTwo.indexOf(index) > -1)) {
+                scoreboard[1] += 1;
+                showWinner('Winner Player O!!!', scoreboard);
+              }
+              if (playerOne.length >= 4 && playerTwo.length >= 4) {
+                showWinner('Tie!!!', scoreboard);
+              }
+            });
+          });
+        });
+        nextRoundButton.addEventListener('click', () => {
+          board = ['', '', '', '', '', '', '', '', ''];
+          playerOne = [];
+          playerTwo = [];
+          onTop.style.display = 'none';
+          playerMovement = true;
+          hastagPieces.forEach((element) => {
+            element.innerHTML = '';
+          });
+        });
+      };
+
+      function showWinner(text, score) {
+        const onTop = document.querySelector('.onTop');
+        const p = document.querySelector('.onTop .score p');
+        const scoreboard = document.querySelector('.scoreboard');
+        p.innerHTML = text;
+        scoreboard.innerHTML = `${score[0]} : ${score[1]}`;
+        onTop.style.display = 'block';
+      }
+      ticTacToe();
+    </script>
+  </body>
+</html>
